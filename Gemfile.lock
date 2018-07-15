@@ -1,0 +1,23 @@
+PATH
+  remote: .
+  specs:
+    lida (0.0.1)
+      applescript (~> 1.0)
+      commander (~> 4.4)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    applescript (1.0)
+    commander (4.4.5)
+      highline (~> 1.7.2)
+    highline (1.7.10)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  lida!
+
+BUNDLED WITH
+   1.16.1

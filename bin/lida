@@ -1,0 +1,102 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'commander/import'
+require 'applescript'
+
+program :name, 'Lida'
+program :version, '0.0.1'
+program :description, 'Folder to terminal, terminal to folder.'
+program :help, 'Author', 'Quentin Jin <jianstm@gmail.com>'
+
+# terminal to finder
+command :finder do |c|
+  c.syntax = 'lida folder'
+  c.description = 'Open current directory in finder'
+  c.action do
+    `open -a Finder ./`
+  end
+end
+
+
+# folder to terminal
+command :terminal do |c|
+  c.syntax = 'lida terminal'
+  c.description = 'Open current directory in terminal'
+  c.action do
+    script = <<-eos
+    set result to (path to frontmost application as text)
+    return result
+    eos
+
+    if AppleScript.execute(script) =~ /iTerm.app/
+      AppleScript.execute(FINDER_TO_ITERM)
+    else
+      AppleScript.execute(FINDER_TO_TERMINAL)
+    end
+  end
+end
+
+default_command :terminal
+
+FINDER_TO_ITERM = <<EOS
+  tell application "Finder"
+    if (count of windows) is 0 then
+      set pathList to "~"
+    else
+      set pathList to (quoted form of POSIX path of (folder of the front window as alias))
+    end if
+    set command to "clear; cd " & pathList
+  end tell
+  
+  tell application "System Events"
+    -- some versions might identify as "iTerm2" instead of "iTerm"
+    set isRunning to (exists (processes where name is "iTerm")) or (exists (processes where name is "iTerm2"))
+  end tell
+  
+  tell application "iTerm"
+    activate
+    set hasNoWindows to ((count of windows) is 0)
+    if isRunning and hasNoWindows then
+      create window with default profile
+    end if
+    select first window
+    
+    tell the first window
+      if isRunning and hasNoWindows is false then
+        create tab with default profile
+      end if
+      tell current session to write text command
+    end tell
+  end tell
+EOS
+
+FINDER_TO_TERMINAL = <<-EOS
+tell application "Finder"
+  if (count of windows) is 0 then
+    set pathList to "~"
+  else
+    set pathList to (quoted form of POSIX path of (folder of the front window as alias))
+  end if
+end tell
+
+tell application "System Events"
+  if not (exists (processes where name is "Terminal")) then
+    do shell script "open -a Terminal " & pathList
+  else
+    tell application "Terminal"
+      activate
+      if (count of windows) is 0 then
+        do script ("cd " & pathList)
+      else
+        tell application "System Events" to tell process "Terminal.app" to keystroke "t" using command down
+        delay 1
+        do script ("cd " & pathList) in first window
+      end if
+    end tell
+  end if
+end tell
+EOS
+
+
+
