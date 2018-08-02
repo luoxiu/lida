@@ -1,17 +1,19 @@
 PATH
   remote: .
   specs:
-    lida (0.0.1)
+    lida (0.0.2)
       applescript (~> 1.0)
       commander (~> 4.4)
+      rainbow (~> 3.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     applescript (1.0)
-    commander (4.4.5)
+    commander (4.4.6)
       highline (~> 1.7.2)
     highline (1.7.10)
+    rainbow (3.0.0)
 
 PLATFORMS
   ruby
@@ -20,4 +22,4 @@ DEPENDENCIES
   lida!
 
 BUNDLED WITH
-   1.16.1
+   1.16.2

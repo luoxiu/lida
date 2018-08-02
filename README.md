@@ -1,15 +1,24 @@
 # lida
 
-🥧 Open current finder dir in terminal/iterm and vice versa, easy as pie!
+🍰 Open current finder/xcode dir in terminal/iterm and vice versa, easy as cake!
 
 ## Usage
 
 ```shell
-# Open current finder dir in a new tab in current terminal
-lida
+# Open working directory of current terminal in finder
+lida 
 
-# Open current working directory in finder
-lida finder 
+# Open current finder dir in a new tab of current terminal
+lida finder
+lida f
+
+# Open current xcode dir in a new tab of current terminal
+lida xcode 
+lida x
+
+# 
+lida xcodebeta
+lida xb
 ```
 
 ## Installation
@@ -20,9 +29,9 @@ gem install lida
 
 ## Acknowledgement
 
-Very thank to [LeEnno's](https://github.com/LeEnno) [alfred-terminalfinder](https://github.com/LeEnno/alfred-terminalfinder)! If you are using alfred, you have to try it.
+Inspired by LeEnno's [alfred-terminalfinder](https://github.com/LeEnno/alfred-terminalfinder)! 
 
-## Contribution
+## Contributing
 
 Feel free to criticize!
 
