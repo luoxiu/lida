@@ -3,12 +3,13 @@
 require 'rubygems'
 require 'commander/import'
 require 'applescript'
+require 'uri'
 require 'rainbow/refinement'
 using Rainbow
 
 program :name, 'Lida'
-program :version, '0.0.2'
-program :description, 'Finder to terminal; Xcode to terminal; Terminal to finder'
+program :version, '0.0.3'
+program :description, '🍰 Open current finder/xcode dir in terminal/iterm and vice versa, easy as cake!'
 program :help, 'Author', 'Quentin Jin <jianstm@gmail.com>'
 
 # Terminal to finder
@@ -28,7 +29,7 @@ command :xcode do |c|
     begin
       path = get_current_path_of_xcode 'Xcode'
     rescue
-      puts 'No active window or file on Xcode.'.red
+      puts_error 'No active window on xcode.'
     end
 
     open_path path if path
@@ -38,12 +39,12 @@ end
 # Xcode-beta to terminal
 command :xcodebeta do |c|
   c.syntax = 'lida xcodebeta'
-  c.description = 'Open current xcode dir in a new tab of current terminal'
+  c.description = 'Open current xcode-beta dir in a new tab of current terminal'
   c.action do
     begin
       path = get_current_path_of_xcode 'Xcode-beta'
     rescue
-      puts 'No active window or file on Xcode-beta.'.red
+      puts_error 'No active window on xcode-beta.'
     end
 
     open_path path if path
@@ -58,7 +59,7 @@ command :finder do |c|
     begin
       path = get_current_path_of_finder
     rescue
-      puts 'No active window on Finder.'.red
+      puts_error 'No active window on Finder.'
     end
     open_path path if path
   end
@@ -122,23 +123,28 @@ def open_path(path)
   elsif flag == 1
     open_path_in_iterm path
   else
-    puts 'Lida only supports iterm and terminal for now.'.red
+    puts_error 'Lida only supports iterm and terminal for now.'
   end
 end
 
-def open_path_in_iterm(dic)
+def open_path_in_iterm(dir)
   script = <<~EOS
-    set command to "cd #{dic}"
+    set dir to (quoted form of POSIX path of ("#{dir}"))
+    set command to "clear; cd " & dir
     tell application "iTerm"
       select first window
       tell the first window
         create tab with default profile
-        tell current session to write text "clear"
         tell current session to write text command
       end tell
     end tell
   EOS
-  AppleScript.execute(script)
+
+  begin
+    AppleScript.execute(script)
+  rescue
+    puts_error 'Open path in iterm failed.'
+  end
 end
 
 def open_path_in_terminal(path)
@@ -148,10 +154,18 @@ def open_path_in_terminal(path)
       tell application "System Events" to keystroke "t" using command down
         delay 1
       do script ("clear") in first window
-      do script ("cd #{path}") in first window
+      do script ("cd '#{path}'") in first window
      end tell
   EOS
-  AppleScript.execute(script)
+  begin
+    AppleScript.execute(script)
+  rescue
+    puts_error 'Open path in terminal failed.'
+  end
+end
+
+def puts_error(msg)
+  puts '[lida]: ' + msg.red
 end
 
 class NoWindowError < StandardError
