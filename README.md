@@ -1,5 +1,7 @@
 # lida
 
+[![Gem Version](https://img.shields.io/gem/v/lida.svg)](https://rubygems.org/gems/lida)
+
 🍰 Open current finder/xcode dir in terminal/iterm and vice versa, easy as cake!
 
 ## Usage
@@ -30,10 +32,6 @@ gem install lida
 ## Acknowledgement
 
 Inspired by LeEnno's [alfred-terminalfinder](https://github.com/LeEnno/alfred-terminalfinder)! 
-
-## Contributing
-
-Feel free to criticize!
 
 ## License
 
